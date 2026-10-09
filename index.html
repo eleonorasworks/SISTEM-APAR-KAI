@@ -74,7 +74,11 @@ th{text-align:left;color:var(--tx2);font-size:12px;padding:9px 10px;border-botto
 .pg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}.pg i{font-style:normal;font-size:11px;color:#7a86a8;padding:3px 0}
 .pt{display:flex;gap:12px}.pt>div{flex:1}.pg6{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}.pg3{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
 .pf2{display:flex;justify-content:space-between;margin-top:8px;border-top:1px solid #e3e7f3;padding-top:6px}.pf2 button{color:#1B2F8A;font-weight:600;padding:5px 8px}
-@media print{#pk{display:none!important}.pf:not(.on){visibility:hidden}.pf,.pf.on{border:0;background:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+.np{position:fixed;z-index:65;width:350px;max-width:calc(100vw - 16px);max-height:70vh;overflow-y:auto;background:var(--sf);color:var(--tx);border:1px solid var(--bd);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.nh{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--sf)}.nh button{border:0;background:none;color:var(--or);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.ni{display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid var(--bd);cursor:pointer}.ni:hover{background:var(--dr)}.ni .d{width:9px;height:9px;border-radius:50%;margin-top:5px;flex:0 0 9px;opacity:.35}.ni.u .d{opacity:1}
+.nt{font-size:13.5px;color:var(--tx2)}.ni.u .nt{color:var(--tx);font-weight:700}.ns{font-size:12px;color:var(--tx2);margin-top:2px}.bl{border-color:#F47B20}
+@media print{.np{display:none!important}#pk{display:none!important}.pf:not(.on){visibility:hidden}.pf,.pf.on{border:0;background:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
@@ -90,9 +94,9 @@ th{text-align:left;color:var(--tx2);font-size:12px;padding:9px 10px;border-botto
 <div id="app" class="hide">
 <aside><div class="lgo">K<b>A</b>I</div><div class="sub">SIAPAR · Daop 6 Yogyakarta</div><nav id="nav"></nav>
 <div class="me"><b id="who"></b><button data-act="logout">Keluar</button></div></aside>
-<main><div class="top"><h1 class="t" id="ttl"></h1><div><button class="chip" id="bell" data-go="Laporan"></button> <button class="chip" data-act="theme">Tema</button></div></div><div id="view"></div></main>
+<main><div class="top"><h1 class="t" id="ttl"></h1><div><button class="chip" id="bell" data-act="bell"></button> <button class="chip" data-act="theme">Tema</button></div></div><div id="view"></div></main>
 </div>
-<div id="modal"></div>
+<div id="np" class="np hide"></div><div id="modal"></div>
 <datalist id="fis"><option value="Terawat, tergantung di dinding"><option value="Terawat, diletakkan di bawah"><option value="Tidak terawat"></datalist>
 <script>
 var $=i=>document.getElementById(i),TODAY=(()=>{var t=new Date();t.setHours(0,0,0,0);return t})(),TS=("0"+TODAY.getDate()).slice(-2)+"/"+("0"+(TODAY.getMonth()+1)).slice(-2)+"/"+TODAY.getFullYear();
@@ -191,7 +195,7 @@ hist("—",fin?"Formulir Final":"Formulir Draft","—",fin?"Final":"Draft","Form
 const TITLE={"Dashboard":"Dashboard Pemantauan APAR","Formulir Checklist":"Formulir Checklist Pemantauan APAR"};
 function render(){$("ttl").textContent=TITLE[cur]||cur;
 $("nav").innerHTML=MENU.map(m=>'<button data-go="'+m+'" class="'+(m==cur?"on":"")+'">'+m+'</button>').join("");
-$("bell").textContent="🔔 "+DB.A.filter(a=>days(a)<=60).length;
+var un=unread();$("bell").textContent=un?"🔔 "+un:"🔔";$("bell").classList.toggle("bl",un>0);if(!$("np").classList.contains("hide"))drawN();
 $("view").innerHTML=cur=="Dashboard"?dash():cur=="Master APAR"?master():cur=="Formulir Checklist"?(edit?formDoc():forms()):PAGES[cur]();
 if(cur=="Formulir Checklist"&&edit)fInit(cf>=0?DB.F[cf].d:null)}
 const openM=h=>{$("modal").innerHTML='<div class="ov"><div class="md">'+h+'</div></div>'},closeM=()=>{$("modal").innerHTML=""};
@@ -238,12 +242,25 @@ else if(x=="day"){setP(k.el,v);closePK()}
 else if(x=="today"){setP(k.el,t.getFullYear()+"-"+pad(t.getMonth()+1)+"-"+pad(t.getDate()));closePK()}
 else if(x=="now"){k.h=t.getHours();k.mi=Math.floor(t.getMinutes()/5)*5;commitT();closePK()}
 else if(x=="clr"){setP(k.el,"");closePK()}}
+const isR=id=>(DB.rd||[]).indexOf(id)>-1,markR=id=>{DB.rd=DB.rd||[];if(DB.rd.indexOf(id)<0)DB.rd.push(id)};
+function notifs(){var L=[];
+DB.A.forEach(a=>{var d=days(a),s=a[6]+" · "+a[7]+" · "+a[9];if(d<0)L.push({id:"exp:"+a[0]+a[9],c:"#D93C32",t:a[0]+" sudah kedaluwarsa",s:s,g:"Laporan"});else if(d<=60)L.push({id:"soon:"+a[0]+a[9],c:"#F47B20",t:a[0]+" kedaluwarsa dalam "+d+" hari",s:s,g:"Laporan"})});
+DB.TL.forEach(t=>{if(t[3]!="Selesai")L.push({id:"tl:"+t[0]+"|"+(t[5]||"")+"|"+t[4]+"|"+t[1],c:"#D93C32",t:"Temuan baru: "+t[0],s:t[1]+" · "+t[4],g:"Tindak Lanjut"})});
+DB.F.forEach(f=>{if(f.st=="Draft")L.push({id:"dr:"+f.ref+"|"+f.tgl,c:"#C98A00",t:"Formulir "+f.ref+" masih draft",s:"Petugas "+f.pt+" · "+f.tgl,g:"Formulir Checklist"})});
+if(!DB.F.some(f=>{var q=D(f.tgl);return q.getMonth()==TODAY.getMonth()&&q.getFullYear()==TODAY.getFullYear()}))L.push({id:"noins:"+TODAY.getMonth()+"-"+TODAY.getFullYear(),c:"#D93C32",t:"Belum ada formulir inspeksi bulan "+MON[TODAY.getMonth()],s:"Ketuk untuk membuat formulir checklist",g:"new"});
+DB.H.slice(0,5).forEach(h=>L.push({id:"h:"+h.join("|"),c:"#2A44B5",t:h[1]+" — "+h[2],s:h[5]+" · "+h[0],g:"Riwayat"}));
+return L}
+const unread=()=>notifs().filter(n=>!isR(n.id)).length;
+function drawN(){var L=notifs(),u=L.filter(n=>!isR(n.id)),o=L.filter(n=>isR(n.id));
+$("np").innerHTML='<div class="nh"><b>Notifikasi</b>'+(u.length?'<button data-act="readall">Tandai semua dibaca</button>':'')+'</div>'+(u.concat(o).map(n=>'<div class="ni'+(isR(n.id)?"":" u")+'" data-act="nopen" data-id="'+E(n.id)+'" data-g="'+n.g+'"><i class="d" style="background:'+n.c+'"></i><div><div class="nt">'+E(n.t)+'</div><div class="ns">'+E(n.s)+'</div></div></div>').join("")||'<div class="empty">Tidak ada notifikasi.</div>')}
+function openN(){var n=$("np"),r=$("bell").getBoundingClientRect();drawN();n.classList.remove("hide");n.style.top=(r.bottom+6)+"px";n.style.right=Math.max(8,innerWidth-r.right)+"px"}
+function closeN(){$("np").classList.add("hide")}
 function doLogin(){var n=$("nipp").value.trim();if(!/^\d{4,10}$/.test(n)){$("er").textContent="Masukkan NIPP berupa angka (4–10 digit).";return}
 var u=DB.USR.filter(x=>x[2]==n)[0];$("er").textContent="";user=n;$("who").textContent=(u?u[0]:"Petugas")+" · NIPP "+n;$("login").classList.add("hide");$("app").classList.remove("hide");cur="Dashboard";edit=false;render()}
 document.addEventListener("click",e=>{var pf=e.target.closest(".pf");if(pf){var on=pf.dataset.v!="1";pf.dataset.v=on?"1":"";pf.classList.toggle("on",on);R[+pf.closest("tr").dataset.i].par=on?"1":"";return}
 var pk=e.target.closest("[data-pick]");if(pk){openPK(pk);return}
 var pa=e.target.closest("[data-pk]");if(pa){pkAct(pa);return}
-if(!e.target.closest("#pk"))closePK();
+if(!e.target.closest("#pk"))closePK();if(!e.target.closest("#np")&&!e.target.closest("#bell"))closeN();
 var b=e.target.closest("[data-go]");if(b){cur=b.getAttribute("data-go");edit=false;render();return}
 var a=e.target.closest("[data-act]");if(!a)return;var x=a.dataset.act,s=a.dataset.s,i=+a.dataset.i;
 if(x=="login")doLogin();
@@ -263,6 +280,9 @@ else if(x=="mx")closeM()
 else if(x=="del")openM('<h2>Hapus data?</h2><p style="font-size:14px;color:var(--tx2)">'+E(s=="F"?DB.F[i].ref:DB[KEY(s)][i][0])+' akan dihapus.</p><div class="mb"><button class="btn ghost" data-act="mx">Batal</button><button class="btn" style="background:#B3261E" data-act="mdel" data-s="'+s+'" data-i="'+i+'">Hapus</button></div>')
 else if(x=="mdel"){var k=KEY(s),it=DB[k][i];DB[k].splice(i,1);if(s=="Master APAR")hist(it[0],"Hapus APAR","Aktif","—","Aset APAR "+it[0]+" dihapus.");save();closeM();render()}
 else if(x=="refill"){var p=DB.A[i];p[8]=TS;p[9]=TS.slice(0,6)+(TODAY.getFullYear()+1);hist(p[0],"Isi Ulang","—","—","Isi ulang APAR "+p[0]+".");save();render()}
+else if(x=="bell"){if($("np").classList.contains("hide"))openN();else closeN()}
+else if(x=="nopen"){markR(a.dataset.id);save();closeN();var g=a.dataset.g;if(g=="new"){cur="Formulir Checklist";edit=true;cf=-1}else{cur=g;edit=false}render()}
+else if(x=="readall"){notifs().forEach(n=>markR(n.id));save();render()}
 else if(x=="resetdb"){DB=JSON.parse(JSON.stringify(SEED));save();render()}});
 document.addEventListener("input",e=>{var t=e.target;
 if(t.id=="q"){var p=t.selectionStart;$("view").innerHTML=master(t.value);var q=$("q");q.focus();q.setSelectionRange(p,p);return}
