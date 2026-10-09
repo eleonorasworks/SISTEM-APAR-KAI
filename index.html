@@ -65,6 +65,16 @@ th{text-align:left;color:var(--tx2);font-size:12px;padding:9px 10px;border-botto
 .acts{white-space:nowrap}.acts .chip{padding:4px 9px;font-size:12px;margin-right:3px}
 .paper input[type=date]::-webkit-calendar-picker-indicator,.paper input[type=time]::-webkit-calendar-picker-indicator{display:none}
 @media print{.ov,#modal{display:none!important}.paper .e{color:transparent!important}.paper ::placeholder{color:transparent}.paper tr{page-break-inside:avoid}.paper thead{display:table-header-group}}
+.paper input[readonly]{cursor:pointer}
+.pf{width:26px;height:26px;border:1.5px solid #9aa3bd;border-radius:6px;background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;vertical-align:middle}
+.pf.on{border-color:#1B8A44;background:#E3F6EA}.pf.on::after{content:"✓";color:#1B8A44;font-weight:900;font-size:19px;line-height:1}
+.pk{position:fixed;z-index:70;background:#fff;color:#13204A;border:1px solid #cfd5e6;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);padding:10px;font:13px system-ui,sans-serif;width:262px}
+.pk button{border:0;background:none;border-radius:8px;padding:7px 0;font:inherit;color:inherit;cursor:pointer}.pk button:hover{background:#EEF1FB}
+.pk .on{background:#F47B20;color:#fff}.pk .td{outline:1px solid #F47B20}.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.ph button{width:32px;font-size:18px}
+.pg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}.pg i{font-style:normal;font-size:11px;color:#7a86a8;padding:3px 0}
+.pt{display:flex;gap:12px}.pt>div{flex:1}.pg6{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}.pg3{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.pf2{display:flex;justify-content:space-between;margin-top:8px;border-top:1px solid #e3e7f3;padding-top:6px}.pf2 button{color:#1B2F8A;font-weight:600;padding:5px 8px}
+@media print{#pk{display:none!important}.pf:not(.on){visibility:hidden}.pf,.pf.on{border:0;background:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
@@ -97,13 +107,23 @@ const SEED={A:[
 ["APAR-030","Chubb","TEST-30001","Cartridge","Carbon Dioxide","5 Kg","Ruang Server","Rak Server B","01/09/2025","01/09/2026","PT. Proteksi Abadi"],
 ["APAR-100","Yamato","TEST-10001","Stored Pressure","ABC Powder","5 Kg","Lobby Kantor","Pintu Masuk Barat","14/08/2026","14/08/2027","PT. Mandiri Jaya"],
 ["APAR-101","Yamato","TEST-10101","Stored Pressure","ABC Powder","6 Kg","Ruang Uji","Rak Uji B","14/08/2026","14/08/2027","PT. Mandiri Jaya"],
-["APAR-102","Yamato","TEST-10202","Cartridge","Carbon Dioxide","5 Kg","Ruang Arsip","Ruang 1 Kantor Daop 6","14/08/2026","14/08/2027","PT. Proteksi Abadi"]],
+["APAR-102","Yamato","TEST-10202","Cartridge","Carbon Dioxide","5 Kg","Ruang Arsip","Ruang 1 Kantor Daop 6","14/08/2026","14/08/2027","PT. Proteksi Abadi"],
+["APAR-103","Yamato","TEST-10303","Stored Pressure","ABC Powder","6 Kg","Ruang Rapat","Ruang Rapat Utama","20/07/2026","20/07/2027","PT. Mandiri Jaya"],
+["APAR-104","Chubb","CH-22418","Cartridge","Carbon Dioxide","5 Kg","Ruang Genset","Panel Genset","10/06/2026","10/06/2027","PT. Proteksi Abadi"],
+["APAR-105","Yamato","YM-2026-01102","Stored Pressure","ABC Powder","6 Kg","Pos Satpam","Pintu Gerbang Utama","05/05/2026","05/05/2027","PT. Mandiri Jaya"],
+["APAR-106","Yamato","YM-2026-01155","Stored Pressure","ABC Powder","6 Kg","Gudang Arsip","Pintu Masuk Gudang","12/05/2026","12/05/2027","PT. Mandiri Jaya"],
+["APAR-107","Chubb","CH-22533","Stored Pressure","ABC Powder","5 Kg","Kantin","Dekat Dapur","18/06/2026","18/06/2027","PT. Proteksi Abadi"],
+["APAR-108","Yamato","S-70112","Stored Pressure","ABC Powder","5 Kg","Lobby Lantai 2","Dekat Tangga","25/07/2026","25/07/2027","PT. Mandiri Jaya"],
+["APAR-109","Yamato","S-70245","Stored Pressure","ABC Powder","6 Kg","Lobby Lantai 2","Koridor Timur","25/07/2026","25/07/2027","PT. Mandiri Jaya"],
+["APAR-110","Chubb","CH-22671","Cartridge","Carbon Dioxide","5 Kg","Ruang Panel Listrik","Panel Utama","30/06/2026","30/06/2027","PT. Proteksi Abadi"],
+["APAR-111","Yamato","YM-2026-01290","Stored Pressure","ABC Powder","6 Kg","Mushola","Pintu Masuk","08/07/2026","08/07/2027","PT. Mandiri Jaya"],
+["APAR-112","Yamato","YM-2026-01311","Stored Pressure","ABC Powder","5 Kg","Area Parkir","Pos Parkir Depan","15/07/2026","15/07/2027","PT. Proteksi Abadi"]],
 VEN:[["PT. Mandiri Jaya","—"],["PT. Proteksi Abadi","—"]],USR:[["Admin Sistem Informasi","Admin","—"],["Daffa","Petugas","—"]],SIG:[],TL:[],
 F:[{ref:"002/APAR/VII/2026",tgl:"18/08/2026",bln:"Agustus 2026",pt:"Agnes",st:"Draft"},{ref:"001/APAR/VII/2026",tgl:"31/07/2026",bln:"Juli 2026",pt:"Daffa",st:"Draft"}],
 H:[["18/08/2026","APAR-099","Aktivasi Kembali","Non Aktif","Aktif","Aset APAR APAR-099 diaktifkan kembali."],["18/08/2026","APAR-021","Aktivasi Kembali","Non Aktif","Aktif","Aset APAR APAR-021 diaktifkan kembali."],["14/08/2026","APAR-002","Aktivasi Kembali","Non Aktif","Aktif","Aset APAR APAR-002 diaktifkan kembali."],["03/08/2026","APAR-002","Isi Ulang","—","—","Isi ulang APAR APAR-002."]]};
-var DB;try{DB=JSON.parse(localStorage.getItem("siapar_v2"))}catch(e){}
+var DB;try{DB=JSON.parse(localStorage.getItem("siapar_v3"))}catch(e){}
 if(!DB||!DB.A)DB=JSON.parse(JSON.stringify(SEED));
-const save=()=>{try{localStorage.setItem("siapar_v2",JSON.stringify(DB))}catch(e){}};
+const save=()=>{try{localStorage.setItem("siapar_v3",JSON.stringify(DB))}catch(e){}};
 const lok=()=>{var l=[];DB.A.forEach(a=>{if(a[6]&&l.indexOf(a[6])<0)l.push(a[6])});return l};
 const hist=(k,j,a,b,t)=>{DB.H.unshift([TS,k,j,a,b,t])};
 const MENU=["Dashboard","Formulir Checklist","Master APAR","Vendor","Tindak Lanjut","Laporan","Riwayat","Penandatangan","Pengguna","Pengaturan"];
@@ -144,18 +164,18 @@ const PAGES={
 "Pengaturan":()=>'<div class="card"><h2>Pengaturan</h2><p style="font-size:13.5px;color:var(--tx2)">Masuk sebagai NIPP '+E(user)+'.</p><button class="btn ghost" data-act="theme">Ganti tema</button> <button class="btn ghost" data-act="resetdb">Kembalikan data contoh</button></div>'};
 function formDoc(){return '<div class="tools noprint"><div class="k"><i></i>Kolom berwarna diisi manual. Kolom lain terisi otomatis setelah Lokasi dipilih. Jika tombol cetak tidak merespons, tekan Ctrl+P.</div><button class="btn ghost" data-act="back">← Kembali</button><button class="btn ghost" data-act="reset">Kosongkan</button><button class="btn ghost" data-act="save">Simpan draft</button><button class="btn ghost" data-act="final">Finalkan</button><button class="btn" data-act="print">Cetak / Simpan PDF</button></div><div class="err noprint" id="ferr"></div>'+
 '<div class="tw"><div class="paper"><table class="hd"><tr><td class="kai" rowspan="4">K<b>A</b>I</td><td class="tt" rowspan="4">PT. KERETA API INDONESIA (PERSERO)<br>SISTEM INFORMASI<br><br>FORMULIR CHECKLIST PEMANTAUAN APAR</td><td class="r">Nomor : FR.SM/TI/015.007/10-2020</td></tr><tr><td class="r">Tanggal Terbit : 12 Oktober 2020</td></tr><tr><td class="r">Status Revisi : 002-2020</td></tr><tr><td class="r">Halaman : 1 dari 1</td></tr></table>'+
-'<table class="meta"><tr><td>No Ref</td><td>: <input id="ref"></td></tr><tr><td>Tanggal</td><td>: <input type="date" id="tgl"></td></tr><tr><td>Business Area</td><td>: <input id="ba" value="Daop 6 Yogyakarta"></td></tr><tr><td>Bulan</td><td>: <span id="bln"></span></td></tr></table>'+
+'<table class="meta"><tr><td>No Ref</td><td>: <input id="ref"></td></tr><tr><td>Tanggal</td><td>: <input id="tgl" data-pick="d" readonly placeholder="dd/mm/yyyy"></td></tr><tr><td>Business Area</td><td>: <input id="ba" value="Daop 6 Yogyakarta"></td></tr><tr><td>Bulan</td><td>: <span id="bln"></span></td></tr></table>'+
 '<table><thead><tr><th rowspan="2">No.</th><th rowspan="2">Kode/ID Aset</th><th rowspan="2">Merk</th><th rowspan="2">Tipe</th><th rowspan="2">Media Pemadam<br>(Air/Busa/Serbuk/CO2/Hallon Free)</th><th rowspan="2">Kapasitas<br>(Kg)</th><th rowspan="2">Lokasi</th><th colspan="2">Waktu Pengecekan</th><th rowspan="2">Tgl. Isi Ulang</th><th rowspan="2">Tgl. Kadaluarsa</th><th rowspan="2">Indikator Tekanan Gas<br>(Hijau/Merah)</th><th rowspan="2">Perlakuan Fisik</th><th rowspan="2">Tindak Lanjut</th><th rowspan="2">Paraf Petugas</th></tr><tr><th>Tgl.</th><th>Jam</th></tr></thead><tbody id="tb"></tbody></table>'+
 '<p style="text-align:left;margin:10px 0 4px">Catatan :</p><textarea class="man cat" id="cat" rows="3"></textarea><div class="sg"><div class="b">Mengetahui,<input id="mn" list="sig" placeholder="Nama pejabat"><div style="margin-top:6px">NIPP. <input id="mp" style="width:150px;margin:0" inputmode="numeric"></div></div></div></div></div><datalist id="sig">'+DB.SIG.map(x=>'<option value="'+E(x[0])+'">').join("")+'</datalist>'}
 const ee=e=>e.classList.toggle("e",!e.value);
-function head(){var d=$("tgl").value;if(!d){$("bln").textContent="";return}var x=new Date(d+"T00:00:00");$("bln").textContent=MON[x.getMonth()]+" "+x.getFullYear();if(!$("ref").dataset.d)$("ref").value="001/APAR/"+ROM[x.getMonth()]+"/"+x.getFullYear()}
-function fInit(d){R=[];var h="";for(var i=0;i<N;i++){R.push({lok:""});h+='<tr data-i="'+i+'"><td>'+(i+1)+'</td><td class="c0"></td><td class="c1"></td><td class="c2"></td><td class="c3"></td><td class="c4"></td><td class="man"><select class="e" data-f="lok"><option value="">Pilih lokasi</option>'+lok().map(l=>'<option>'+E(l)+'</option>').join("")+'</select><div class="ss c5"></div></td><td class="man"><input class="e" type="date" data-f="tgl"></td><td class="man"><input class="e" type="time" data-f="jam"></td><td class="c6"></td><td class="c7"></td><td class="man"><select class="e" data-f="ind"><option></option><option>Hijau</option><option>Merah</option></select></td><td class="man"><input list="fis" data-f="fis"></td><td class="man"><input data-f="tl"></td><td class="man"><input data-f="par"></td></tr>'}
-$("tb").innerHTML=h;var t=new Date(),p=n=>(n<10?"0":"")+n;$("tgl").value=t.getFullYear()+"-"+p(t.getMonth()+1)+"-"+p(t.getDate());
-if(d){$("tgl").value=d.tgl;$("ref").value=d.ref;$("ref").dataset.d="1";$("ba").value=d.ba;$("cat").value=d.cat;$("mn").value=d.mn;$("mp").value=d.mp;
-d.rows.forEach((r,i)=>{R[i]=Object.assign({},r);$("tb").children[i].querySelectorAll("[data-f]").forEach(e=>{e.value=r[e.dataset.f]||"";ee(e)})})}
+function head(){var d=$("tgl").dataset.v;if(!d){$("bln").textContent="";return}var x=new Date(d+"T00:00:00");$("bln").textContent=MON[x.getMonth()]+" "+x.getFullYear();if(!$("ref").dataset.d)$("ref").value="001/APAR/"+ROM[x.getMonth()]+"/"+x.getFullYear()}
+function fInit(d){R=[];var h="";for(var i=0;i<N;i++){R.push({lok:""});h+='<tr data-i="'+i+'"><td>'+(i+1)+'</td><td class="c0"></td><td class="c1"></td><td class="c2"></td><td class="c3"></td><td class="c4"></td><td class="man"><select class="e" data-f="lok"><option value="">Pilih lokasi</option>'+lok().map(l=>'<option>'+E(l)+'</option>').join("")+'</select><div class="ss c5"></div></td><td class="man"><input class="e" data-pick="d" data-f="tgl" readonly placeholder="dd/mm/yyyy"></td><td class="man"><input class="e" data-pick="t" data-f="jam" readonly placeholder="--:--"></td><td class="c6"></td><td class="c7"></td><td class="man"><select class="e" data-f="ind"><option></option><option>Hijau</option><option>Merah</option></select></td><td class="man"><input list="fis" data-f="fis"></td><td class="man"><input data-f="tl"></td><td class="man"><button type="button" class="pf" data-f="par" data-v="" aria-label="Paraf petugas"></button></td></tr>'}
+$("tb").innerHTML=h;var t=new Date();setPick($("tgl"),t.getFullYear()+"-"+pad(t.getMonth()+1)+"-"+pad(t.getDate()));
+if(d){setPick($("tgl"),d.tgl);$("ref").value=d.ref;$("ref").dataset.d="1";$("ba").value=d.ba;$("cat").value=d.cat;$("mn").value=d.mn;$("mp").value=d.mp;
+d.rows.forEach((r,i)=>{R[i]=Object.assign({},r);$("tb").children[i].querySelectorAll("[data-f]").forEach(e=>{setF(e,r[e.dataset.f])})})}
 else if(cf>=0){$("ref").value=DB.F[cf].ref;$("ref").dataset.d="1"}
 head();recalc()}
-function recalc(){var used={},base=$("tgl").value?new Date($("tgl").value+"T00:00:00"):new Date();
+function recalc(){var used={},base=$("tgl").dataset.v?new Date($("tgl").dataset.v+"T00:00:00"):new Date();
 for(var i=0;i<N;i++){var row=$("tb").children[i],f=null,m="";
 if(R[i].lok){for(var k=0;k<DB.A.length;k++){if(DB.A[k][6]==R[i].lok&&!used[DB.A[k][0]]){f=DB.A[k];used[f[0]]=1;break}}if(!f)m="Semua APAR di lokasi ini sudah terisi"}
 R[i].kode=f?f[0]:"";var c=n=>row.querySelector(".c"+n),v=f?[f[0],f[1],f[3],f[4]=="Carbon Dioxide"?"CO2":"Serbuk",parseFloat(f[5])]:["","","","",""];
@@ -164,7 +184,7 @@ if(!f&&!R[i].lok)c(0).innerHTML='<span class="mt">otomatis</span>';
 c(5).innerHTML=f?E(f[7]):(m?'<span class="warn">'+m+'</span>':"");c(6).textContent=f?f[8]:"";
 c(7).innerHTML=f?(D(f[9])<base?'<span class="warn">'+f[9]+'<br>(kedaluwarsa)</span>':f[9]):""}}
 function saveForm(fin){var rows=R.filter(r=>r.lok);if(fin&&!rows.length){$("ferr").textContent="Pilih lokasi minimal di satu baris sebelum memfinalkan.";return}
-var d={ref:$("ref").value,tgl:$("tgl").value,ba:$("ba").value,cat:$("cat").value,mn:$("mn").value,mp:$("mp").value,rows:R.map(r=>Object.assign({},r))};
+var d={ref:$("ref").value,tgl:$("tgl").dataset.v||"",ba:$("ba").value,cat:$("cat").value,mn:$("mn").value,mp:$("mp").value,rows:R.map(r=>Object.assign({},r))};
 var e={ref:d.ref,tgl:dm(d.tgl),bln:$("bln").textContent,pt:"NIPP "+user,st:fin?"Final":"Draft",d:d};
 if(fin)R.forEach(r=>{if(r.ind=="Merah"&&r.kode&&!DB.TL.some(t=>t[0]==r.kode&&t[5]==d.ref))DB.TL.push([r.kode,"Indikator tekanan gas merah",r.tl||"",r.tl?"Proses":"Belum",dm(d.tgl),d.ref])});
 if(cf>=0)DB.F[cf]=e;else DB.F.unshift(e);save();edit=false;render()}
@@ -186,9 +206,45 @@ if(s=="Tindak Lanjut"&&i>=0)a[5]=DB.TL[i][5];
 if(i>=0)DB[c.k][i]=a;else DB[c.k].push(a);
 if(s=="Master APAR")hist(a[0],i>=0?"Ubah Data":"Tambah APAR","—","—",i>=0?"Data APAR "+a[0]+" diubah.":"Aset APAR "+a[0]+" ditambahkan.");
 save();closeM();render()}
+const pad=n=>(n<10?"0":"")+n;
+const setPick=(el,v)=>{el.dataset.v=v;el.value=el.dataset.pick=="d"?dm(v):v;ee(el)};
+const setF=(e,v)=>{if(e.classList.contains("pf")){e.dataset.v=v||"";e.classList.toggle("on",v=="1")}else if(e.dataset.pick)setPick(e,v||"");else{e.value=v||"";ee(e)}};
+var PK=null;
+function closePK(){var p=$("pk");if(p)p.remove();PK=null}
+function openPK(el){var same=PK&&PK.el==el;closePK();if(same)return;var b=document.createElement("div");b.id="pk";b.className="pk";document.body.appendChild(b);
+var v=el.dataset.v||"",n=new Date(),y=n.getFullYear(),m=n.getMonth(),h=null,mi=null;
+if(el.dataset.pick=="d"&&v){y=+v.slice(0,4);m=+v.slice(5,7)-1}
+if(el.dataset.pick=="t"&&v){h=+v.slice(0,2);mi=+v.slice(3,5)}
+PK={el:el,y:y,m:m,h:h,mi:mi};drawPK();posPK()}
+function posPK(){var r=PK.el.getBoundingClientRect(),b=$("pk"),w=b.offsetWidth,hh=b.offsetHeight,x=Math.max(8,Math.min(r.left,innerWidth-w-8)),y=r.bottom+4;if(y+hh>innerHeight-8)y=Math.max(8,r.top-hh-4);b.style.left=x+"px";b.style.top=y+"px"}
+function drawPK(){var b=$("pk"),k=PK,el=k.el,h="";
+if(el.dataset.pick=="d"){var off=(new Date(k.y,k.m,1).getDay()+6)%7,dim=new Date(k.y,k.m+1,0).getDate(),sel=el.dataset.v||"",t=new Date(),ti=t.getFullYear()+"-"+pad(t.getMonth()+1)+"-"+pad(t.getDate());
+h='<div class="ph"><button data-pk="prev">‹</button><b>'+MON[k.m]+' '+k.y+'</b><button data-pk="next">›</button></div><div class="pg">'+["Sen","Sel","Rab","Kam","Jum","Sab","Min"].map(x=>'<i>'+x+'</i>').join("");
+for(var i=0;i<off;i++)h+='<span></span>';
+for(var d=1;d<=dim;d++){var iv=k.y+"-"+pad(k.m+1)+"-"+pad(d);h+='<button data-pk="day" data-v="'+iv+'" class="'+(iv==sel?"on ":"")+(iv==ti?"td":"")+'">'+d+'</button>'}
+h+='</div><div class="pf2"><button data-pk="today">Hari ini</button><button data-pk="clr">Hapus</button></div>'}
+else{h='<div class="pt"><div><b>Jam</b><div class="pg6">';for(var i=0;i<24;i++)h+='<button data-pk="hr" data-v="'+i+'" class="'+(k.h===i?"on":"")+'">'+pad(i)+'</button>';
+h+='</div></div><div><b>Menit</b><div class="pg3">';for(var j=0;j<60;j+=5)h+='<button data-pk="mn" data-v="'+j+'" class="'+(k.mi===j?"on":"")+'">'+pad(j)+'</button>';
+h+='</div></div></div><div class="pf2"><button data-pk="now">Sekarang</button><button data-pk="clr">Hapus</button></div>'}
+b.innerHTML=h}
+function setP(el,v){setPick(el,v);var row=el.closest("#tb tr");if(row)R[+row.dataset.i][el.dataset.f]=v;if(el.id=="tgl"){head();recalc()}}
+function commitT(){setP(PK.el,pad(PK.h)+":"+pad(PK.mi))}
+function pkAct(a){var k=PK,x=a.dataset.pk,v=a.dataset.v,t=new Date();
+if(x=="prev"){k.m--;if(k.m<0){k.m=11;k.y--}drawPK()}
+else if(x=="next"){k.m++;if(k.m>11){k.m=0;k.y++}drawPK()}
+else if(x=="hr"){k.h=+v;if(k.mi==null)k.mi=0;commitT();drawPK()}
+else if(x=="mn"){k.mi=+v;if(k.h==null)k.h=8;commitT();closePK()}
+else if(x=="day"){setP(k.el,v);closePK()}
+else if(x=="today"){setP(k.el,t.getFullYear()+"-"+pad(t.getMonth()+1)+"-"+pad(t.getDate()));closePK()}
+else if(x=="now"){k.h=t.getHours();k.mi=Math.floor(t.getMinutes()/5)*5;commitT();closePK()}
+else if(x=="clr"){setP(k.el,"");closePK()}}
 function doLogin(){var n=$("nipp").value.trim();if(!/^\d{4,10}$/.test(n)){$("er").textContent="Masukkan NIPP berupa angka (4–10 digit).";return}
 var u=DB.USR.filter(x=>x[2]==n)[0];$("er").textContent="";user=n;$("who").textContent=(u?u[0]:"Petugas")+" · NIPP "+n;$("login").classList.add("hide");$("app").classList.remove("hide");cur="Dashboard";edit=false;render()}
-document.addEventListener("click",e=>{var b=e.target.closest("[data-go]");if(b){cur=b.getAttribute("data-go");edit=false;render();return}
+document.addEventListener("click",e=>{var pf=e.target.closest(".pf");if(pf){var on=pf.dataset.v!="1";pf.dataset.v=on?"1":"";pf.classList.toggle("on",on);R[+pf.closest("tr").dataset.i].par=on?"1":"";return}
+var pk=e.target.closest("[data-pick]");if(pk){openPK(pk);return}
+var pa=e.target.closest("[data-pk]");if(pa){pkAct(pa);return}
+if(!e.target.closest("#pk"))closePK();
+var b=e.target.closest("[data-go]");if(b){cur=b.getAttribute("data-go");edit=false;render();return}
 var a=e.target.closest("[data-act]");if(!a)return;var x=a.dataset.act,s=a.dataset.s,i=+a.dataset.i;
 if(x=="login")doLogin();
 else if(x=="logout"){$("app").classList.add("hide");$("login").classList.remove("hide");$("nipp").value=""}
