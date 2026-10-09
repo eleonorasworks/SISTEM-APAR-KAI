@@ -95,7 +95,7 @@ th{text-align:left;color:var(--tx2);font-size:12px;padding:9px 10px;border-botto
 <div id="modal"></div>
 <datalist id="fis"><option value="Terawat, tergantung di dinding"><option value="Terawat, diletakkan di bawah"><option value="Tidak terawat"></datalist>
 <script>
-var $=i=>document.getElementById(i),TODAY=new Date("2026-10-07T00:00:00"),TS="07/10/2026";
+var $=i=>document.getElementById(i),TODAY=(()=>{var t=new Date();t.setHours(0,0,0,0);return t})(),TS=("0"+TODAY.getDate()).slice(-2)+"/"+("0"+(TODAY.getMonth()+1)).slice(-2)+"/"+TODAY.getFullYear();
 const D=s=>{var p=s.split("/");return new Date(p[2]+"-"+p[1]+"-"+p[0]+"T00:00:00")};
 const iso=s=>{var p=(s||"").split("/");return p.length==3?p[2]+"-"+p[1]+"-"+p[0]:""};
 const dm=s=>{var p=(s||"").split("-");return p.length==3?p[2]+"/"+p[1]+"/"+p[0]:""};
@@ -144,13 +144,13 @@ const tr=c=>'<tr>'+c+'</tr>',td=v=>'<td>'+v+'</td>';
 const bar=(t,s,b)=>'<div class="top"><h2 style="margin:0">'+t+'</h2>'+(b?'<button class="btn" data-act="add" data-s="'+s+'">'+b+'</button>':'')+'</div>';
 function dash(){
 var A=DB.A,exp=A.filter(a=>days(a)<0),soon=A.filter(a=>{var d=days(a);return d>=0&&d<=60}),need=exp.concat(soon),ms=[],mn=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
-for(var i=-1;i<5;i++){var d=new Date(2026,9+i,1),c=A.filter(a=>{var e=D(a[9]);return e.getMonth()==d.getMonth()&&e.getFullYear()==d.getFullYear()}).length;ms.push([mn[d.getMonth()]+" "+String(d.getFullYear()).slice(2),c])}
-var since=Math.round((TODAY-D("18/08/2026"))/864e5),dr=DB.F.filter(f=>f.st=="Draft").length,tl=DB.TL.filter(t=>t[3]!="Selesai").length;
+for(var i=-1;i<5;i++){var d=new Date(TODAY.getFullYear(),TODAY.getMonth()+i,1),c=A.filter(a=>{var e=D(a[9]);return e.getMonth()==d.getMonth()&&e.getFullYear()==d.getFullYear()}).length;ms.push([mn[d.getMonth()]+" "+String(d.getFullYear()).slice(2),c])}
+var fs=DB.F.filter(f=>f.tgl),last=fs.reduce((m,f)=>!m||D(f.tgl)>D(m)?f.tgl:m,""),since=last?Math.round((TODAY-D(last))/864e5):0,mf=fs.filter(f=>{var q=D(f.tgl);return q.getMonth()==TODAY.getMonth()&&q.getFullYear()==TODAY.getFullYear()}),nf=mf.filter(f=>f.st=="Final").length,dr=DB.F.filter(f=>f.st=="Draft").length,tl=DB.TL.filter(t=>t[3]!="Selesai").length;
 return '<div class="stats"><div class="st"><b>'+A.length+'</b><span>APAR aktif</span></div><div class="st e"><b>'+exp.length+'</b><span>Kedaluwarsa</span></div><div class="st w"><b>'+soon.length+'</b><span>Kedaluwarsa ≤ 60 hari</span></div><div class="st g"><b>'+dr+'</b><span>Formulir masih draft</span></div><div class="st e"><b>'+tl+'</b><span>Temuan belum ditindaklanjuti</span></div></div>'+
 '<div class="grid"><div class="card"><h2>Perlu tindakan</h2>'+(need.length?need.map(a=>{var s=status(a);return '<div class="act"><span><b>'+E(a[0])+'</b> &nbsp;'+E(a[6])+' · '+E(a[7])+'</span>'+tag(s[0],s[1])+'</div>'}).join(""):'<div class="empty">Tidak ada APAR yang perlu tindakan.</div>')+'</div>'+
 '<div class="card"><h2>APAR per jenis media</h2>'+bars(count(4))+'<h2 style="margin-top:18px">Aktivitas terakhir</h2>'+DB.H.slice(0,3).map(h=>'<div class="act"><span>'+tag(h[0],"t-dr")+' &nbsp;'+E(h[1])+' — '+E(h[2])+'</span></div>').join("")+'</div>'+
 '<div class="card"><h2>Kedaluwarsa 6 bulan ke depan</h2>'+bars(ms)+'<h2 style="margin-top:18px">APAR per lokasi</h2>'+bars(count(6))+'</div>'+
-'<div class="card"><h2>Status inspeksi bulan ini</h2><p style="font-size:13.5px">'+tag("Belum ada formulir","t-er")+' &nbsp;0 formulir bulan Oktober</p><p style="font-size:13.5px">Inspeksi terakhir: <b>18/08/2026 ('+since+' hari lalu)</b></p><button class="btn ghost" data-go="Laporan">Laporan kedaluwarsa</button> <button class="btn" data-act="new">Buat formulir</button></div></div>'}
+'<div class="card"><h2>Status inspeksi bulan ini</h2><p style="font-size:13.5px">'+(mf.length?(nf?tag("Sudah ada formulir final","t-ok"):tag("Masih draft","t-wn")):tag("Belum ada formulir","t-er"))+' &nbsp;'+mf.length+' formulir bulan '+MON[TODAY.getMonth()]+'</p><p style="font-size:13.5px">Inspeksi terakhir: <b>'+(last?last+' ('+since+' hari lalu)':"belum ada")+'</b></p><button class="btn ghost" data-go="Laporan">Laporan kedaluwarsa</button> <button class="btn" data-act="new">Buat formulir</button></div></div>'}
 function master(q){q=(q||"").toLowerCase();var rows=[];DB.A.forEach((a,i)=>{if(a.join(" ").toLowerCase().indexOf(q)>-1){var s=status(a);rows.push(tr('<td class="code">'+E(a[0])+'</td>'+a.slice(1).map(c=>td(E(c))).join("")+td(tag(s[0],s[1]))+acts("Master APAR",i,'<button class="chip" data-act="refill" data-i="'+i+'">Isi Ulang</button>')))}});
 return tbl(["Kode Aset","Merk","Nomor Seri","Tipe","Jenis","Kapasitas","Lokasi","Sub Lokasi","Tgl Isi Ulang","Tgl Kedaluwarsa","Vendor","Status","Aksi"],rows,'<div class="top"><input class="sq" id="q" placeholder="Cari kode, lokasi, vendor..." value="'+E(q)+'"><button class="btn" data-act="add" data-s="Master APAR">+ Tambah APAR</button></div>',"Tidak ada APAR yang cocok.")}
 function forms(){return tbl(["No","No. Referensi","Tanggal","Bulan","Petugas","Status","Aksi"],DB.F.map((f,i)=>tr(td(i+1)+'<td class="code">'+E(f.ref)+'</td>'+td(E(f.tgl))+td(E(f.bln))+td(E(f.pt))+td(tag(f.st,f.st=="Final"?"t-ok":"t-dr"))+acts("F",i,'<button class="chip" data-act="openf" data-i="'+i+'">Buka</button><button class="chip" data-act="printf" data-i="'+i+'">Cetak</button>'))),'<div class="top"><h2 style="margin:0">Daftar Formulir</h2><button class="btn" data-act="new">+ Buat Formulir</button></div>',"Belum ada formulir.").replace(/<button class="chip" data-act="edit" data-s="F"[^>]*>Ubah<\/button>/g,"")}
@@ -187,7 +187,7 @@ function saveForm(fin){var rows=R.filter(r=>r.lok);if(fin&&!rows.length){$("ferr
 var d={ref:$("ref").value,tgl:$("tgl").dataset.v||"",ba:$("ba").value,cat:$("cat").value,mn:$("mn").value,mp:$("mp").value,rows:R.map(r=>Object.assign({},r))};
 var e={ref:d.ref,tgl:dm(d.tgl),bln:$("bln").textContent,pt:"NIPP "+user,st:fin?"Final":"Draft",d:d};
 if(fin)R.forEach(r=>{if(r.ind=="Merah"&&r.kode&&!DB.TL.some(t=>t[0]==r.kode&&t[5]==d.ref))DB.TL.push([r.kode,"Indikator tekanan gas merah",r.tl||"",r.tl?"Proses":"Belum",dm(d.tgl),d.ref])});
-if(cf>=0)DB.F[cf]=e;else DB.F.unshift(e);save();edit=false;render()}
+hist("—",fin?"Formulir Final":"Formulir Draft","—",fin?"Final":"Draft","Formulir "+d.ref+(fin?" difinalkan.":" disimpan sebagai draft."));if(cf>=0)DB.F[cf]=e;else DB.F.unshift(e);save();edit=false;render()}
 const TITLE={"Dashboard":"Dashboard Pemantauan APAR","Formulir Checklist":"Formulir Checklist Pemantauan APAR"};
 function render(){$("ttl").textContent=TITLE[cur]||cur;
 $("nav").innerHTML=MENU.map(m=>'<button data-go="'+m+'" class="'+(m==cur?"on":"")+'">'+m+'</button>').join("");
